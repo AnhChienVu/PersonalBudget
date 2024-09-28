@@ -78,6 +78,28 @@ app.delete("/envelopes/:name", (req, res) => {
   }
 });
 
+// POST /envelopes/transfer/:from/:to: Transfer budget from one envelope to another
+app.post("/envelopes/transfer/:from/:to", (req, res) => {
+  const { from, to } = req.params;
+  let { amount } = req.body;
+  amount = parseInt(amount);
+  const fromEnvelope = envelopes.find((e) => e.name === from);
+  const toEnvelope = envelopes.find((e) => e.name === to);
+
+  if (!fromEnvelope || !toEnvelope) {
+    return res.status(404).send("Envelope not found");
+  }
+
+  if (fromEnvelope.budget < amount) {
+    return res.status(400).send("Insufficient funds");
+  } else {
+    fromEnvelope.budget -= amount;
+    toEnvelope.budget += amount;
+
+    return res.status(200).send({ fromEnvelope, toEnvelope });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
