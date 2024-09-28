@@ -46,6 +46,26 @@ app.get("/envelopes/:name", (req, res) => {
   }
 });
 
+// PUT /envelopes/:name: Update a specific budget envelope
+app.put("/envelopes/:name", (req, res) => {
+  const envelope = envelopes.find((e) => e.name === req.params.name);
+  if (envelope) {
+    const { name, budget } = req.body;
+    if (name) envelope.name = name;
+    if (budget) {
+      if (envelope.budget > budget) {
+        envelope.budget -= budget;
+        totalBudget -= budget;
+      } else if (envelope.budget < budget) {
+        envelope.budget = budget;
+        totalBudget += budget - envelope.budget;
+      }
+    }
+
+    res.status(200).send({ envelope, totalBudget });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
