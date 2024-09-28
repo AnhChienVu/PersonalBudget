@@ -33,6 +33,19 @@ app.get("/envelopes", (req, res) => {
   res.status(200).send(envelopes);
 });
 
+// GET /envelopes/:name: get a specific budget envelope
+app.get("/envelopes/:name", (req, res) => {
+  const envelope = envelopes.find(
+    (envelope) => envelope.name === req.params.name
+  );
+
+  if (envelope) {
+    res.status(200).send(envelope);
+  } else {
+    res.status(404).send("Envelope not found");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
