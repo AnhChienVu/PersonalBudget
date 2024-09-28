@@ -66,6 +66,18 @@ app.put("/envelopes/:name", (req, res) => {
   }
 });
 
+// DELETE /envelopes/:name: Delete a specific budget envelope
+app.delete("/envelopes/:name", (req, res) => {
+  const envelopeIndex = envelopes.findIndex((e) => e.name === req.params.name);
+  if (envelopeIndex !== -1) {
+    const [deletedEnvelope] = envelopes.splice(envelopeIndex, 1);
+    totalBudget -= deletedEnvelope.budget;
+    res.status(200).send({ envelopes, deletedEnvelope });
+  } else {
+    res.status(404).send("Envelope not found");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
